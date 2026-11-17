@@ -1,0 +1,25 @@
+<list>
+<codeTemplateLibrary version="4.5.2">
+  <id>7f3c2a10-0b6e-4d5b-9c11-2a4f0e6b8d01</id>
+  <name>Hospital Integration Hub</name>
+  <revision>1</revision>
+  <lastModified>
+    <time>1795000000000</time>
+    <timezone>UTC</timezone>
+  </lastModified>
+  <description>HubMapper (generated from mapper/) and the hub runtime adapters.</description>
+  <includeNewChannels>false</includeNewChannels>
+  <enabledChannelIds>
+    <string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0001</string>
+    <string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0002</string>
+    <string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0003</string>
+    <string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0004</string>
+    <string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0005</string>
+  </enabledChannelIds>
+  <disabledChannelIds/>
+  <codeTemplates>
+    <codeTemplate version="4.5.2"><id>7f3c2a10-0b6e-4d5b-9c11-2a4f0e6b8d02</id></codeTemplate>
+    <codeTemplate version="4.5.2"><id>7f3c2a10-0b6e-4d5b-9c11-2a4f0e6b8d03</id></codeTemplate>
+  </codeTemplates>
+</codeTemplateLibrary>
+</list>

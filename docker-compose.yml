@@ -1,0 +1,156 @@
+# Hospital Integration Hub - local stack
+#
+#   docker compose up -d        (or: make up)
+#
+# KIS (simulator) --MLLP:6661--> OIE channels --> HAPI FHIR (ISiK 5.2.0, validating)
+#                                    |
+#                                    +--> Postgres "hub": raw messages, status, dead letters
+# ops console (replay, metrics) <---+      Prometheus + Grafana dashboards
+#
+# All host ports bind to 127.0.0.1. Credentials are local-development defaults.
+
+name: hospital-integration-hub
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres && psql -U postgres -tAc \"select 1 from pg_database where datname='hub'\" | grep -q 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    logging: *logging
+
+  hapi:
+    image: hapiproject/hapi:v8.12.0-2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HAPI_DB_PASSWORD: ${HAPI_DB_PASSWORD:-hapi}
+      HAPI_VALIDATION_ENABLED: ${HAPI_VALIDATION_ENABLED:-true}
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx1536m -XX:+UseG1GC"
+    volumes:
+      - ./fhir-server/application.yaml:/app/config/application.yaml:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app", "HealthCheck"]
+      interval: 15s
+      timeout: 10s
+      retries: 60
+      # first start downloads and installs the ISiK package and its dependencies
+      start_period: 300s
+    logging: *logging
+
+  oie:
+    image: openintegrationengine/engine:4.5.2-ubuntu-jre
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE: postgres
+      DATABASE_URL: jdbc:postgresql://postgres:5432/oie
+      DATABASE_USERNAME: oie
+      DATABASE_PASSWORD: ${OIE_DB_PASSWORD:-oie}
+      DATABASE_MAX_RETRY: "10"
+      VMOPTIONS: "-Xmx768m"
+    volumes:
+      - oie-appdata:/opt/engine/appdata
+    ports:
+      - "127.0.0.1:8443:8443"   # Administrator / REST API
+      - "127.0.0.1:6661:6661"   # MLLP inbound (KIS)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -skf -o /dev/null https://localhost:8443/api/server/version -H 'X-Requested-With: OpenAPI' -u admin:${OIE_ADMIN_PASSWORD:-admin}"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    logging: *logging
+
+  # One-shot: seeds the site ConceptMaps into HAPI, pushes the code template
+  # library, configuration map and channels into OIE, and deploys them.
+  engine-init:
+    image: node:24-alpine
+    depends_on:
+      oie:
+        condition: service_healthy
+      hapi:
+        condition: service_healthy
+    working_dir: /work
+    command: ["node", "engine/tools/deploy.ts", "--seed-terminology"]
+    environment:
+      OIE_URL: https://oie:8443
+      OIE_USER: admin
+      OIE_PASSWORD: ${OIE_ADMIN_PASSWORD:-admin}
+      FHIR_BASE_URL: http://hapi:8080/fhir
+    volumes:
+      - ./engine:/work/engine:ro
+      - ./terminology:/work/terminology:ro
+      - ./mapper/dist:/work/mapper/dist:ro
+    restart: "no"
+    logging: *logging
+
+  ops:
+    build: ./ops
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HUB_DB_URL: postgres://hub:${HUB_DB_PASSWORD:-hub}@postgres:5432/hub
+      REPLAY_URL: http://oie:8091/replay/   # trailing slash: OIE redirects /replay to /replay/
+      FHIR_BASE_URL: http://hapi:8080/fhir
+      FHIR_PUBLIC_URL: http://localhost:8080/fhir
+      OIE_URL: https://oie:8443
+      OIE_USER: admin
+      OIE_PASSWORD: ${OIE_ADMIN_PASSWORD:-admin}
+    ports:
+      - "127.0.0.1:8088:8088"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8088/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    logging: *logging
+
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+    logging: *logging
+
+  grafana:
+    image: grafana/grafana:12.2.1
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/hospital-integration-hub.json
+      GF_USERS_DEFAULT_THEME: light
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    logging: *logging
+
+volumes:
+  pgdata:
+  oie-appdata:

@@ -1,0 +1,242 @@
+{
+  "status": "MAPPED",
+  "type": "OML^O21",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:802b7e26-25c9-8608-964f-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000012"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "H400874205"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "von Krause",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+                    "valueString": "von"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Krause"
+                  }
+                ]
+              },
+              "given": [
+                "Anna"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0594 7145359",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1974-07-10",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Schillerplatz 56"
+              ],
+              "city": "Bergen am See",
+              "postalCode": "56789",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Schillerplatz"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "56"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000012&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:802b7e26-25c9-8608-964f-000000000002",
+        "resource": {
+          "resourceType": "ServiceRequest",
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "PLAC"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/auftragsnummer-anforderer",
+              "value": "ANF-100012-2"
+            }
+          ],
+          "status": "active",
+          "intent": "order",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "108252007",
+                  "display": "Laboratory procedure"
+                }
+              ]
+            }
+          ],
+          "priority": "stat",
+          "code": {
+            "coding": [
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "SD",
+                "display": "Schilddrüse"
+              }
+            ],
+            "text": "Schilddrüse"
+          },
+          "subject": {
+            "reference": "urn:uuid:802b7e26-25c9-8608-964f-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100012"
+          },
+          "authoredOn": "2026-11-04T10:44:00+01:00",
+          "requester": {
+            "display": "Dr. Lena Weber"
+          }
+        },
+        "request": {
+          "method": "PUT",
+          "url": "ServiceRequest?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fauftragsnummer-anforderer%7CANF-100012-2"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:802b7e26-25c9-8608-964f-000000000003",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-802b7e2625c9b608164f01d7b6c69bd0",
+          "target": [
+            {
+              "reference": "urn:uuid:802b7e26-25c9-8608-964f-000000000001"
+            },
+            {
+              "reference": "urn:uuid:802b7e26-25c9-8608-964f-000000000002"
+            }
+          ],
+          "occurredDateTime": "2026-11-04T10:44:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000072"
+                },
+                "display": "OML^O21 SIM000072"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-802b7e2625c9b608164f01d7b6c69bd0"
+        }
+      }
+    ]
+  }
+}

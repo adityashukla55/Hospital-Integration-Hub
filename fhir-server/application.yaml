@@ -1,0 +1,143 @@
+# Overrides on top of the hapi-fhir-jpaserver-starter defaults packaged in the
+# image (Spring Boot merges ./config/application.yaml over the classpath one).
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/hapi
+    username: hapi
+    password: ${HAPI_DB_PASSWORD:hapi}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    properties:
+      hibernate:
+        dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+        search:
+          enabled: false
+  ai:
+    mcp:
+      server:
+        enabled: false
+
+management:
+  endpoints:
+    access:
+      default: none
+    web:
+      exposure:
+        include: "health,prometheus"
+
+hapi:
+  fhir:
+    fhir_version: R4
+    server_address: http://localhost:8080/fhir
+    openapi_enabled: true
+    narrative_enabled: false
+    mdm_enabled: false
+    bulk_export_enabled: false
+    client_id_strategy: ALPHANUMERIC
+    enforce_referential_integrity_on_write: true
+    auto_create_placeholder_reference_targets: false
+    allow_multiple_delete: false
+
+    # ISiK Stufe 5 and exactly the packages the hub's resources bind to,
+    # pinned. Transitive installation is off on purpose: the full dependency
+    # graph pulls two versions of hl7.terminology.r4 and SDC, and HAPI 8.12
+    # fails on both (R5-only SearchParameters, duplicate terminology keys).
+    install_transitive_ig_dependencies: false
+    # some packages publish draft ConceptMaps/ValueSets the hub relies on
+    validate_resource_status_for_package_upload: false
+    implementationguides:
+      terminology:
+        name: hl7.terminology.r4
+        version: 7.1.0
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [CodeSystem, ValueSet, ConceptMap, NamingSystem]
+      extensions:
+        name: hl7.fhir.uv.extensions.r4
+        version: 5.2.0
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        # SearchParameters for R5-only resources (e.g. DeviceUsage) are left out
+        installResourceTypes: [StructureDefinition, CodeSystem, ValueSet]
+      basisprofil:
+        name: de.basisprofil.r4
+        version: 1.5.4
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [StructureDefinition, CodeSystem, ValueSet, ConceptMap, NamingSystem]
+      ihe_d:
+        name: de.ihe-d.terminology
+        version: 3.0.1
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [CodeSystem, ValueSet, ConceptMap, NamingSystem]
+      formatcode:
+        # IHE format codes (DocumentReference.content.format, ISiK binding IHEXDSformatCodeDE)
+        name: ihe.formatcode.fhir
+        version: 1.4.0
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [CodeSystem, ValueSet]
+      kdl:
+        name: dvmd.kdl.r4
+        version: 2025.0.1
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [CodeSystem, ValueSet, ConceptMap]
+      gematik_terminology:
+        name: de.gematik.terminology
+        version: 1.0.6
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        installResourceTypes: [CodeSystem, ValueSet, ConceptMap, NamingSystem]
+      isik:
+        name: de.gematik.isik
+        version: 5.2.0
+        packageUrl: https://packages.simplifier.net/de.gematik.isik/5.2.0
+        installMode: STORE_AND_INSTALL
+        fetchDependencies: false
+        reloadExisting: false
+        # No StructureDefinitions as resources: the published package is
+        # FSH-only (no snapshots) and HAPI aborts the whole installation when
+        # it cannot generate one of them (ISiKKoerperkerntemperatur needs
+        # SNOMED CT). The package is still stored in HAPI's package cache, and
+        # the validator reads the profiles from there, generating snapshots
+        # lazily for the profiles that are actually used.
+        installResourceTypes: [CodeSystem, ValueSet, ConceptMap, NamingSystem]
+
+    # Background pre-expansion of every installed ValueSet (hundreds from
+    # hl7.terminology.r4) kept HAPI at 200 % CPU for a long time and tripled
+    # validation latency. The bindings ISiK validates against are small and
+    # are expanded in memory on demand.
+    pre_expand_value_sets: false
+
+    # Never answer a search from the 60 s result cache: the hub's
+    # read-reconcile-write needs the current state (it also sends
+    # Cache-Control: no-cache on its preflight reads).
+    reuse_cached_search_results_millis: 0
+    enable_task_pre_expand_value_sets: false
+
+    # Validate every write against the profiles in meta.profile
+    # (RequestValidatingInterceptor). Invalid transactions are rejected and
+    # end up in the hub's dead-letter queue.
+    # HAPI_VALIDATION_ENABLED=false only for throughput measurements
+    validation:
+      requests_enabled: ${HAPI_VALIDATION_ENABLED:true}
+      responses_enabled: false
+
+    tester:
+      home:
+        name: Hospital Integration Hub
+        server_address: http://localhost:8080/fhir
+        refuse_to_fetch_third_party_urls: true
+        fhir_version: R4

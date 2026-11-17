@@ -1,0 +1,98 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "dokumenttyp-lokal-zu-kdl",
+  "url": "https://fhir.klinikum-musterstadt.example/ConceptMap/dokumenttyp-lokal-zu-kdl",
+  "version": "1.0.0",
+  "name": "DokumenttypLokalZuKdl",
+  "title": "Lokale Dokumenttypen → KDL",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-11-17",
+  "publisher": "Klinikum Musterstadt (synthetic demo site)",
+  "description": "Maps local document types (TXA-2) to the KDL (Klinische Dokumentenklassen-Liste). IHE XDS type and class codes are then derived with the DVMD ConceptMaps from the dvmd.kdl.r4 package.",
+  "group": [
+    {
+      "source": "https://fhir.klinikum-musterstadt.example/CodeSystem/dokumenttyp-lokal",
+      "target": "http://dvmd.de/fhir/CodeSystem/kdl",
+      "element": [
+        {
+          "code": "ENTL",
+          "display": "Entlassbrief",
+          "target": [
+            {
+              "code": "AD010104",
+              "display": "Entlassungsbericht extern",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ENTLI",
+          "display": "Entlassbrief intern",
+          "target": [
+            {
+              "code": "AD010103",
+              "display": "Entlassungsbericht intern",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "VERL",
+          "display": "Verlegungsbrief",
+          "target": [
+            {
+              "code": "AD010116",
+              "display": "Verlegungsbericht",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "BEFB",
+          "display": "Befundbericht",
+          "target": [
+            {
+              "code": "AD010109",
+              "display": "Ärztlicher Befundbericht",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "LABB",
+          "display": "Laborbefund",
+          "target": [
+            {
+              "code": "LB120107",
+              "display": "Laborbefund",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "OPB",
+          "display": "OP-Bericht",
+          "target": [
+            {
+              "code": "OP150103",
+              "display": "OP-Bericht",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "KHEB",
+          "display": "KH-Entlassbrief",
+          "target": [
+            {
+              "code": "ED110112",
+              "display": "KH-Entlassbrief",
+              "equivalence": "equivalent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

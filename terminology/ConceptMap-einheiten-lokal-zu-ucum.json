@@ -1,0 +1,263 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "einheiten-lokal-zu-ucum",
+  "url": "https://fhir.klinikum-musterstadt.example/ConceptMap/einheiten-lokal-zu-ucum",
+  "version": "1.0.0",
+  "name": "EinheitenLokalZuUcum",
+  "title": "Lokale Einheiten → UCUM",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-11-17",
+  "publisher": "Klinikum Musterstadt (synthetic demo site)",
+  "description": "Maps unit strings sent in OBX-6 to UCUM. Source codes are lower-case; the mapper lower-cases OBX-6 before the lookup.",
+  "group": [
+    {
+      "source": "https://fhir.klinikum-musterstadt.example/CodeSystem/einheiten-lokal",
+      "target": "http://unitsofmeasure.org",
+      "element": [
+        {
+          "code": "mmol/l",
+          "display": "mmol/l",
+          "target": [
+            {
+              "code": "mmol/L",
+              "display": "mmol/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "µmol/l",
+          "display": "µmol/l",
+          "target": [
+            {
+              "code": "umol/L",
+              "display": "µmol/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "umol/l",
+          "display": "umol/l",
+          "target": [
+            {
+              "code": "umol/L",
+              "display": "µmol/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "mg/dl",
+          "display": "mg/dl",
+          "target": [
+            {
+              "code": "mg/dL",
+              "display": "mg/dL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "mg/l",
+          "display": "mg/l",
+          "target": [
+            {
+              "code": "mg/L",
+              "display": "mg/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "g/dl",
+          "display": "g/dl",
+          "target": [
+            {
+              "code": "g/dL",
+              "display": "g/dL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "g/l",
+          "display": "g/l",
+          "target": [
+            {
+              "code": "g/L",
+              "display": "g/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "/nl",
+          "display": "/nl",
+          "target": [
+            {
+              "code": "/nL",
+              "display": "/nL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "tsd/µl",
+          "display": "Tsd/µl",
+          "target": [
+            {
+              "code": "10*3/uL",
+              "display": "10³/µL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "giga/l",
+          "display": "Giga/l",
+          "target": [
+            {
+              "code": "10*9/L",
+              "display": "10⁹/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "mu/l",
+          "display": "mU/l",
+          "target": [
+            {
+              "code": "m[IU]/L",
+              "display": "mIU/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "µu/ml",
+          "display": "µU/ml",
+          "target": [
+            {
+              "code": "u[IU]/mL",
+              "display": "µIU/mL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "µiu/ml",
+          "display": "µIU/ml",
+          "target": [
+            {
+              "code": "u[IU]/mL",
+              "display": "µIU/mL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ng/l",
+          "display": "ng/l",
+          "target": [
+            {
+              "code": "ng/L",
+              "display": "ng/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ng/ml",
+          "display": "ng/ml",
+          "target": [
+            {
+              "code": "ng/mL",
+              "display": "ng/mL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "pg/ml",
+          "display": "pg/ml",
+          "target": [
+            {
+              "code": "pg/mL",
+              "display": "pg/mL",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "%",
+          "display": "%",
+          "target": [
+            {
+              "code": "%",
+              "display": "%",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "u/l",
+          "display": "U/l",
+          "target": [
+            {
+              "code": "U/L",
+              "display": "U/L",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "mmol/mol",
+          "display": "mmol/mol",
+          "target": [
+            {
+              "code": "mmol/mol",
+              "display": "mmol/mol",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "inr",
+          "display": "INR",
+          "target": [
+            {
+              "code": "{INR}",
+              "display": "INR",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ml/min",
+          "display": "ml/min",
+          "target": [
+            {
+              "code": "mL/min",
+              "display": "mL/min",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ml/min/1,73m²",
+          "display": "ml/min/1,73m²",
+          "target": [
+            {
+              "code": "mL/min/{1.73_m2}",
+              "display": "mL/min/1.73m²",
+              "equivalence": "equivalent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

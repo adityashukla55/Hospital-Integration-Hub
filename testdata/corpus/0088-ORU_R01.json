@@ -1,0 +1,446 @@
+{
+  "status": "MAPPED",
+  "type": "ORU^R01",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000024"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "A085004192"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "Lehmann",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Lehmann"
+                  }
+                ]
+              },
+              "given": [
+                "Elif"
+              ]
+            },
+            {
+              "use": "maiden",
+              "family": "Lange",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Lange"
+                  }
+                ]
+              }
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0360 911334",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1982-08-09",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Goethestraße 69"
+              ],
+              "city": "Altheim",
+              "postalCode": "45678",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Goethestraße"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "69"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000024&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000002",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100024-1-NA-1"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "2951-2",
+                "display": "Sodium [Moles/volume] in Serum or Plasma"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "NA",
+                "display": "Natrium"
+              }
+            ],
+            "text": "Natrium"
+          },
+          "subject": {
+            "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100024"
+          },
+          "effectiveDateTime": "2026-11-03T22:38:00+01:00",
+          "issued": "2026-11-04T01:18:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "N",
+                  "display": "Normal"
+                }
+              ]
+            }
+          ],
+          "valueQuantity": {
+            "value": 142,
+            "unit": "mmol/L",
+            "system": "http://unitsofmeasure.org",
+            "code": "mmol/L"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 135,
+                "unit": "mmol/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "mmol/L"
+              },
+              "high": {
+                "value": 145,
+                "unit": "mmol/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "mmol/L"
+              },
+              "text": "135-145"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100024-1-NA-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000003",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100024-1-K-2"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "2823-3",
+                "display": "Potassium [Moles/volume] in Serum or Plasma"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "K",
+                "display": "Kalium"
+              }
+            ],
+            "text": "Kalium"
+          },
+          "subject": {
+            "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100024"
+          },
+          "effectiveDateTime": "2026-11-03T22:38:00+01:00",
+          "issued": "2026-11-04T01:18:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "N",
+                  "display": "Normal"
+                }
+              ]
+            }
+          ],
+          "valueQuantity": {
+            "value": 3.8,
+            "unit": "mmol/L",
+            "system": "http://unitsofmeasure.org",
+            "code": "mmol/L"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 3.5,
+                "unit": "mmol/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "mmol/L"
+              },
+              "high": {
+                "value": 5.1,
+                "unit": "mmol/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "mmol/L"
+              },
+              "text": "3.5-5.1"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100024-1-K-2"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000004",
+        "resource": {
+          "resourceType": "DiagnosticReport",
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund",
+              "value": "LAB-100024-1"
+            }
+          ],
+          "basedOn": [
+            {
+              "type": "ServiceRequest",
+              "identifier": {
+                "system": "https://fhir.klinikum-musterstadt.example/sid/auftragsnummer-anforderer",
+                "value": "ANF-100024-1"
+              }
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                  "code": "LAB",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "24326-1",
+                "display": "Electrolytes 1998 panel - Serum or Plasma"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "ELYT",
+                "display": "Elektrolyte"
+              }
+            ],
+            "text": "Elektrolyte"
+          },
+          "subject": {
+            "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100024"
+          },
+          "effectiveDateTime": "2026-11-03T22:38:00+01:00",
+          "issued": "2026-11-04T01:18:00+01:00",
+          "result": [
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000002"
+            },
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000003"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "DiagnosticReport?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund%7CLAB-100024-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000005",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-9e59126846810eb6e0c2658c4b746c7a",
+          "target": [
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000001"
+            },
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000002"
+            },
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000003"
+            },
+            {
+              "reference": "urn:uuid:9e591268-4681-8eb6-a0c2-000000000004"
+            }
+          ],
+          "occurredDateTime": "2026-11-04T01:18:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000149"
+                },
+                "display": "ORU^R01 SIM000149"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-9e59126846810eb6e0c2658c4b746c7a"
+        }
+      }
+    ]
+  }
+}

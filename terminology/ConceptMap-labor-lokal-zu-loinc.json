@@ -1,0 +1,208 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "labor-lokal-zu-loinc",
+  "url": "https://fhir.klinikum-musterstadt.example/ConceptMap/labor-lokal-zu-loinc",
+  "version": "1.0.0",
+  "name": "LaborLokalZuLoinc",
+  "title": "Lokale Laborcodes → LOINC",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-11-17",
+  "publisher": "Klinikum Musterstadt (synthetic demo site)",
+  "description": "Maps the KIS/LIS-local lab test codes (OBX-3 / OBR-4) to LOINC. ISiKLaboruntersuchung requires a LOINC coding, so an OBX whose code is missing here is dead-lettered until the map is extended.",
+  "group": [
+    {
+      "source": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+      "target": "http://loinc.org",
+      "element": [
+        {
+          "code": "NA",
+          "display": "Natrium",
+          "target": [
+            {
+              "code": "2951-2",
+              "display": "Sodium [Moles/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "K",
+          "display": "Kalium",
+          "target": [
+            {
+              "code": "2823-3",
+              "display": "Potassium [Moles/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "CRP",
+          "display": "C-reaktives Protein",
+          "target": [
+            {
+              "code": "1988-5",
+              "display": "C reactive protein [Mass/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "HB",
+          "display": "Hämoglobin",
+          "target": [
+            {
+              "code": "718-7",
+              "display": "Hemoglobin [Mass/volume] in Blood",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "KREA",
+          "display": "Kreatinin",
+          "target": [
+            {
+              "code": "2160-0",
+              "display": "Creatinine [Mass/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "GLUC",
+          "display": "Glukose",
+          "target": [
+            {
+              "code": "2345-7",
+              "display": "Glucose [Mass/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "LEUKO",
+          "display": "Leukozyten",
+          "target": [
+            {
+              "code": "6690-2",
+              "display": "Leukocytes [#/volume] in Blood by Automated count",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "THROMB",
+          "display": "Thrombozyten",
+          "target": [
+            {
+              "code": "777-3",
+              "display": "Platelets [#/volume] in Blood by Automated count",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "TSH",
+          "display": "TSH basal",
+          "target": [
+            {
+              "code": "3016-3",
+              "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "TNTHS",
+          "display": "Troponin T hochsensitiv",
+          "target": [
+            {
+              "code": "67151-1",
+              "display": "Troponin T.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "PCT",
+          "display": "Procalcitonin",
+          "target": [
+            {
+              "code": "33959-8",
+              "display": "Procalcitonin [Mass/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "HBA1C",
+          "display": "HbA1c",
+          "target": [
+            {
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "INR",
+          "display": "INR",
+          "target": [
+            {
+              "code": "6301-6",
+              "display": "INR in Platelet poor plasma by Coagulation assay",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "GPT",
+          "display": "GPT (ALT)",
+          "target": [
+            {
+              "code": "1742-6",
+              "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "GOT",
+          "display": "GOT (AST)",
+          "target": [
+            {
+              "code": "1920-8",
+              "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "ELYT",
+          "display": "Elektrolyte",
+          "target": [
+            {
+              "code": "24326-1",
+              "display": "Electrolytes 1998 panel - Serum or Plasma",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
+          "code": "BB",
+          "display": "Kleines Blutbild",
+          "target": [
+            {
+              "code": "58410-2",
+              "display": "CBC panel - Blood by Automated count",
+              "equivalence": "equivalent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

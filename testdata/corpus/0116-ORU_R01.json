@@ -1,0 +1,337 @@
+{
+  "status": "MAPPED",
+  "type": "ORU^R01",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000012"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "H400874205"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "von Krause",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+                    "valueString": "von"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Krause"
+                  }
+                ]
+              },
+              "given": [
+                "Anna"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0594 7145359",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1974-07-10",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Schillerplatz 56"
+              ],
+              "city": "Bergen am See",
+              "postalCode": "56789",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Schillerplatz"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "56"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000012&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000002",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100012-2-TSH-1"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "3016-3",
+                "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "TSH",
+                "display": "TSH basal"
+              }
+            ],
+            "text": "TSH basal"
+          },
+          "subject": {
+            "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100012"
+          },
+          "effectiveDateTime": "2026-11-04T11:04:00+01:00",
+          "issued": "2026-11-04T11:29:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "N",
+                  "display": "Normal"
+                }
+              ]
+            }
+          ],
+          "valueQuantity": {
+            "value": 2.13,
+            "unit": "mIU/L",
+            "system": "http://unitsofmeasure.org",
+            "code": "m[IU]/L"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 0.4,
+                "unit": "mIU/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "m[IU]/L"
+              },
+              "high": {
+                "value": 4,
+                "unit": "mIU/L",
+                "system": "http://unitsofmeasure.org",
+                "code": "m[IU]/L"
+              },
+              "text": "0.4-4"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100012-2-TSH-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000003",
+        "resource": {
+          "resourceType": "DiagnosticReport",
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund",
+              "value": "LAB-100012-2"
+            }
+          ],
+          "basedOn": [
+            {
+              "type": "ServiceRequest",
+              "identifier": {
+                "system": "https://fhir.klinikum-musterstadt.example/sid/auftragsnummer-anforderer",
+                "value": "ANF-100012-2"
+              }
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                  "code": "LAB",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "SD",
+                "display": "Schilddrüse"
+              }
+            ],
+            "text": "Schilddrüse"
+          },
+          "subject": {
+            "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100012"
+          },
+          "effectiveDateTime": "2026-11-04T11:04:00+01:00",
+          "issued": "2026-11-04T11:29:00+01:00",
+          "result": [
+            {
+              "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000002"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "DiagnosticReport?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund%7CLAB-100012-2"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000004",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-6d9cf4cc85a9f49c21b79c8f14e6129d",
+          "target": [
+            {
+              "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000001"
+            },
+            {
+              "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000002"
+            },
+            {
+              "reference": "urn:uuid:6d9cf4cc-85a9-849c-a1b7-000000000003"
+            }
+          ],
+          "occurredDateTime": "2026-11-04T11:29:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000073"
+                },
+                "display": "ORU^R01 SIM000073"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-6d9cf4cc85a9f49c21b79c8f14e6129d"
+        }
+      }
+    ]
+  }
+}

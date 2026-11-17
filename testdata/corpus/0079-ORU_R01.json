@@ -1,0 +1,535 @@
+{
+  "status": "MAPPED",
+  "type": "ORU^R01",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000021"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "M777598458"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "Koch",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Koch"
+                  }
+                ]
+              },
+              "given": [
+                "Leonie"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0560 3533273",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1966-11-20",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Goethestraße 25a"
+              ],
+              "city": "Beispielhausen",
+              "postalCode": "23456",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Goethestraße"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "25a"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000021&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000002",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100021-1-HB-1"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "718-7",
+                "display": "Hemoglobin [Mass/volume] in Blood"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "HB",
+                "display": "Hämoglobin"
+              }
+            ],
+            "text": "Hämoglobin"
+          },
+          "subject": {
+            "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100021"
+          },
+          "effectiveDateTime": "2026-11-03T17:47:00+01:00",
+          "issued": "2026-11-03T20:27:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "N",
+                  "display": "Normal"
+                }
+              ]
+            }
+          ],
+          "valueQuantity": {
+            "value": 16,
+            "unit": "g/dL",
+            "system": "http://unitsofmeasure.org",
+            "code": "g/dL"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 12,
+                "unit": "g/dL",
+                "system": "http://unitsofmeasure.org",
+                "code": "g/dL"
+              },
+              "high": {
+                "value": 16,
+                "unit": "g/dL",
+                "system": "http://unitsofmeasure.org",
+                "code": "g/dL"
+              },
+              "text": "12-16"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100021-1-HB-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000003",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100021-1-LEUKO-2"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "6690-2",
+                "display": "Leukocytes [#/volume] in Blood by Automated count"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "LEUKO",
+                "display": "Leukozyten"
+              }
+            ],
+            "text": "Leukozyten"
+          },
+          "subject": {
+            "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100021"
+          },
+          "effectiveDateTime": "2026-11-03T17:47:00+01:00",
+          "issued": "2026-11-03T20:27:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "H",
+                  "display": "High"
+                }
+              ]
+            }
+          ],
+          "note": [
+            {
+              "text": "Wert kontrolliert"
+            }
+          ],
+          "valueQuantity": {
+            "value": 11.5,
+            "unit": "/nL",
+            "system": "http://unitsofmeasure.org",
+            "code": "/nL"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 4,
+                "unit": "/nL",
+                "system": "http://unitsofmeasure.org",
+                "code": "/nL"
+              },
+              "high": {
+                "value": 10,
+                "unit": "/nL",
+                "system": "http://unitsofmeasure.org",
+                "code": "/nL"
+              },
+              "text": "4-10"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100021-1-LEUKO-2"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000004",
+        "resource": {
+          "resourceType": "Observation",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKLaboruntersuchung"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund-observation",
+              "value": "LAB-100021-1-THROMB-3"
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "777-3",
+                "display": "Platelets [#/volume] in Blood by Automated count"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "THROMB",
+                "display": "Thrombozyten"
+              }
+            ],
+            "text": "Thrombozyten"
+          },
+          "subject": {
+            "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100021"
+          },
+          "effectiveDateTime": "2026-11-03T17:47:00+01:00",
+          "issued": "2026-11-03T20:27:00+01:00",
+          "interpretation": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                  "code": "N",
+                  "display": "Normal"
+                }
+              ]
+            }
+          ],
+          "valueQuantity": {
+            "value": 353,
+            "unit": "/nL",
+            "system": "http://unitsofmeasure.org",
+            "code": "/nL"
+          },
+          "referenceRange": [
+            {
+              "low": {
+                "value": 150,
+                "unit": "/nL",
+                "system": "http://unitsofmeasure.org",
+                "code": "/nL"
+              },
+              "high": {
+                "value": 400,
+                "unit": "/nL",
+                "system": "http://unitsofmeasure.org",
+                "code": "/nL"
+              },
+              "text": "150-400"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Observation?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund-observation%7CLAB-100021-1-THROMB-3"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000005",
+        "resource": {
+          "resourceType": "DiagnosticReport",
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/laborbefund",
+              "value": "LAB-100021-1"
+            }
+          ],
+          "basedOn": [
+            {
+              "type": "ServiceRequest",
+              "identifier": {
+                "system": "https://fhir.klinikum-musterstadt.example/sid/auftragsnummer-anforderer",
+                "value": "ANF-100021-1"
+              }
+            }
+          ],
+          "status": "final",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                  "code": "LAB",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ],
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "58410-2",
+                "display": "CBC panel - Blood by Automated count"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "BB",
+                "display": "Kleines Blutbild"
+              }
+            ],
+            "text": "Kleines Blutbild"
+          },
+          "subject": {
+            "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100021"
+          },
+          "effectiveDateTime": "2026-11-03T17:47:00+01:00",
+          "issued": "2026-11-03T20:27:00+01:00",
+          "result": [
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000002"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000003"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000004"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "DiagnosticReport?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Flaborbefund%7CLAB-100021-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:c048e5da-2706-8d0d-916d-000000000006",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-c048e5da27065d0dd16d3d94336454d0",
+          "target": [
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000001"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000002"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000003"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000004"
+            },
+            {
+              "reference": "urn:uuid:c048e5da-2706-8d0d-916d-000000000005"
+            }
+          ],
+          "occurredDateTime": "2026-11-03T20:27:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000134"
+                },
+                "display": "ORU^R01 SIM000134"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-c048e5da27065d0dd16d3d94336454d0"
+        }
+      }
+    ]
+  }
+}

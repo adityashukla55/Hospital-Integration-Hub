@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hub Ops Console</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #5d6677; --line: #e2e5eb;
+    --accent: #2563a8; --ok: #1f7a4d; --warn: #9a6400; --bad: #b42318; --chip: #eef1f5; --mono-bg: #f2f4f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --panel: #1a1f27; --text: #e6e9ef; --muted: #9aa3b2; --line: #2b323d;
+            --accent: #6ea8ff; --ok: #4cc38a; --warn: #e0a84a; --bad: #ff7a6e; --chip: #232a34; --mono-bg: #151a21; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: baseline; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { font-size: 16px; margin: 0; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header a { color: var(--accent); margin-left: auto; font-size: 13px; text-decoration: none; }
+  main { padding: 16px 20px; display: grid; gap: 16px; max-width: 1400px; margin: 0 auto; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+  .tile .n { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tile .l { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .tile.active { outline: 2px solid var(--accent); }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  section > h2 { font-size: 13px; margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: center; }
+  section > h2 .grow { flex: 1; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 6px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  tr.click { cursor: pointer; }
+  tr.click:hover td { background: var(--chip); }
+  .st { font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 10px; background: var(--chip); white-space: nowrap; }
+  .st.DELIVERED { color: var(--ok); } .st.FAILED { color: var(--bad); } .st.RETRYING { color: var(--warn); } .st.IGNORED { color: var(--muted); }
+  .muted { color: var(--muted); }
+  button { font: inherit; font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--chip); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  input, select { font: inherit; font-size: 13px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+  .layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; }
+  @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+  pre { margin: 0; padding: 10px 14px; background: var(--mono-bg); overflow-x: auto; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; }
+  .seg { color: var(--accent); font-weight: 600; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; padding: 10px 14px; }
+  .kv div:nth-child(odd) { color: var(--muted); }
+  .issue { padding: 4px 14px; font-size: 13px; }
+  .issue code { font-size: 12px; }
+  a { color: var(--accent); }
+  .empty { padding: 20px 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hospital Integration Hub</h1>
+  <span class="sub">HL7 v2 → ISiK Stufe 5 FHIR · ops console</span>
+  <a href="http://localhost:3000" target="_blank" rel="noopener">Grafana ↗</a>
+</header>
+<main>
+  <div class="tiles" id="tiles"></div>
+
+  <section id="dlq">
+    <h2><span class="grow">Open dead letters</span><button class="primary" id="replay-all">Replay all</button></h2>
+    <div id="dlq-body"></div>
+  </section>
+
+  <div class="layout">
+    <section>
+      <h2>
+        <span class="grow">Messages</span>
+        <select id="f-type"><option value="">all types</option></select>
+        <input id="f-q" placeholder="control id or text" size="18">
+      </h2>
+      <div id="list"></div>
+    </section>
+    <section id="detail"><h2>Message</h2><div class="empty">Select a message.</div></section>
+  </div>
+</main>
+<script>
+(() => {
+  const STATUSES = ['RECEIVED', 'MAPPED', 'DELIVERED', 'RETRYING', 'FAILED', 'IGNORED'];
+  let status = '';
+  let fhirBase = '';
+  const $ = (id) => document.getElementById(id);
+
+  function el(tag, attrs, ...children) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    }
+    for (const c of children.flat()) if (c != null) e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    return e;
+  }
+  const api = async (path, opts) => {
+    const r = await fetch(path, opts);
+    const body = await r.json();
+    if (!r.ok) throw new Error(body.error || r.status);
+    return body;
+  };
+  const time = (t) => (t ? new Date(t).toLocaleString() : '');
+  const badge = (s) => el('span', { class: 'st ' + s }, s);
+
+  async function summary() {
+    const s = await api('/api/summary');
+    fhirBase = s.fhirBaseUrl;
+    const counts = Object.fromEntries(s.byStatus.map((r) => [r.status, r.n]));
+    const total = s.byStatus.reduce((a, r) => a + r.n, 0);
+    const tiles = [['', 'all', total], ...STATUSES.map((k) => [k, k.toLowerCase(), counts[k] || 0])];
+    $('tiles').replaceChildren(
+      ...tiles.map(([k, label, n]) => el('div', { class: 'tile' + (status === k ? ' active' : ''), onclick: () => { status = k; refresh(); } },
+        el('div', { class: 'n' }, n), el('div', { class: 'l' }, label))),
+      el('div', { class: 'tile' }, el('div', { class: 'n' }, s.latencyLastHour?.p95 ? Math.round(s.latencyLastHour.p95) + ' ms' : '–'), el('div', { class: 'l' }, 'p95 end-to-end (1 h)'))
+    );
+    const types = [...new Set(s.byType.map((r) => r.message_type).filter(Boolean))].sort();
+    const sel = $('f-type');
+    const current = sel.value;
+    sel.replaceChildren(el('option', { value: '' }, 'all types'), ...types.map((t) => el('option', { value: t }, t)));
+    sel.value = current;
+  }
+
+  async function deadLetters() {
+    const rows = await api('/api/dead-letters');
+    $('replay-all').style.display = rows.length ? '' : 'none';
+    if (!rows.length) return $('dlq-body').replaceChildren(el('div', { class: 'empty' }, 'No open dead letters.'));
+    $('dlq-body').replaceChildren(el('table', {},
+      el('tr', {}, ['#', 'when', 'type', 'stage', 'code', 'message', ''].map((h) => el('th', {}, h))),
+      rows.map((d) => el('tr', { class: 'click', onclick: () => detail(d.message_id) },
+        el('td', {}, d.message_id), el('td', { class: 'muted' }, time(d.created_at)), el('td', {}, d.message_type || '–'),
+        el('td', {}, d.stage), el('td', {}, el('code', {}, d.code)), el('td', {}, d.message),
+        el('td', {}, el('button', { onclick: (e) => { e.stopPropagation(); replay(d.message_id); } }, 'Replay'))))
+    ));
+  }
+
+  async function list() {
+    const p = new URLSearchParams({ limit: '100' });
+    if (status) p.set('status', status);
+    if ($('f-type').value) p.set('type', $('f-type').value);
+    if ($('f-q').value) p.set('q', $('f-q').value);
+    const rows = await api('/api/messages?' + p);
+    if (!rows.length) return $('list').replaceChildren(el('div', { class: 'empty' }, 'No messages.'));
+    $('list').replaceChildren(el('table', {},
+      el('tr', {}, ['#', 'received', 'type', 'control id', 'status', 'ms'].map((h) => el('th', {}, h))),
+      rows.map((m) => el('tr', { class: 'click', onclick: () => detail(m.id) },
+        el('td', {}, m.id, m.replay_of ? el('span', { class: 'muted' }, ' ↻' + m.replay_of) : null), el('td', { class: 'muted' }, time(m.received_at)),
+        el('td', {}, m.message_type || '–'), el('td', {}, m.control_id || '–'),
+        el('td', {}, badge(m.status), m.status_code ? el('span', { class: 'muted' }, ' ' + m.status_code) : null),
+        el('td', { class: 'muted' }, m.end_to_end_ms ? Math.round(m.end_to_end_ms) : '')))
+    ));
+  }
+
+  function hl7(raw) {
+    return el('pre', {}, raw.split(/\r\n|\r|\n/).filter(Boolean).flatMap((line) => [el('span', { class: 'seg' }, line.slice(0, 3)), line.slice(3) + '\n']));
+  }
+
+  async function detail(id) {
+    const m = await api('/api/messages/' + id);
+    const locations = m.fhir_locations || [];
+    const issues = [...(m.issues || [])];
+    $('detail').replaceChildren(
+      el('h2', {}, el('span', { class: 'grow' }, `Message #${m.id} · ${m.message_type || 'unparseable'}`), el('button', { onclick: () => replay(m.id) }, 'Replay')),
+      el('div', { class: 'kv' },
+        'status', el('div', {}, badge(m.status), m.status_code ? ' ' + m.status_code : ''),
+        'detail', el('div', {}, m.status_message || '–'),
+        'control id', el('div', {}, m.control_id || '–'),
+        'sender', el('div', {}, [m.sending_application, m.sending_facility].filter(Boolean).join(' @ ') || '–'),
+        'received', el('div', {}, time(m.received_at)),
+        'delivered', el('div', {}, time(m.delivered_at) || '–'),
+        'attempts', el('div', {}, m.attempts),
+        'replays', el('div', {}, m.replays.length ? m.replays.map((r) => el('a', { href: '#', onclick: (e) => { e.preventDefault(); detail(r.id); } }, `#${r.id} (${r.status}) `)) : '–'),
+        'replay of', el('div', {}, m.replay_of ? el('a', { href: '#', onclick: (e) => { e.preventDefault(); detail(m.replay_of); } }, '#' + m.replay_of) : '–')
+      ),
+      issues.length ? el('div', {}, issues.map((i) => el('div', { class: 'issue' }, el('code', {}, i.code), ' ', i.message, i.location ? el('span', { class: 'muted' }, ' @ ' + i.location) : null))) : null,
+      m.deadLetters.length ? el('div', {}, m.deadLetters.map((d) => el('div', { class: 'issue' }, '⚠ ', el('code', {}, d.stage + ' ' + d.code), ' ', d.message,
+        d.details?.serverIssues?.length ? el('div', { class: 'muted' }, d.details.serverIssues.slice(0, 5).join(' · ')) : null))) : null,
+      locations.length ? el('div', { class: 'kv' }, 'FHIR', el('div', {}, locations.map((l) => [el('a', { href: fhirBase + '/' + l.replace(/\/_history\/.*/, ''), target: '_blank', rel: 'noopener' }, l), el('br')]))) : null,
+      hl7(m.raw)
+    );
+  }
+
+  async function replay(id) {
+    await api(`/api/messages/${id}/replay`, { method: 'POST' });
+    setTimeout(refresh, 800);
+  }
+  $('replay-all').addEventListener('click', async () => {
+    await api('/api/dead-letters/replay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    setTimeout(refresh, 800);
+  });
+  $('f-type').addEventListener('change', list);
+  let t;
+  $('f-q').addEventListener('input', () => { clearTimeout(t); t = setTimeout(list, 250); });
+
+  async function refresh() {
+    try { await Promise.all([summary(), deadLetters(), list()]); } catch (e) { console.error(e); }
+  }
+  refresh();
+  setInterval(refresh, 5000);
+})();
+</script>
+</body>
+</html>

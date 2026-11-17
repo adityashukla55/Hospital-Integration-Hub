@@ -1,0 +1,428 @@
+{
+  "status": "MAPPED",
+  "type": "ADT^A02",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:9599d157-17bf-887b-8f41-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000009"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "X046027734"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "Lange",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Lange"
+                  }
+                ]
+              },
+              "given": [
+                "Jonas"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0377 4755046",
+              "use": "home"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1943-06-17",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Lindenallee 95"
+              ],
+              "city": "Neudorf",
+              "postalCode": "34567",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Lindenallee"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "95"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Patient?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000009&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9599d157-17bf-887b-8f41-000000000002",
+        "resource": {
+          "resourceType": "Account",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKAbrechnungsfall"
+            ]
+          },
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "AN"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/abrechnungsnummer",
+              "value": "F2026100009"
+            }
+          ],
+          "status": "active",
+          "subject": [
+            {
+              "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000001"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Account?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fabrechnungsnummer%7CF2026100009"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9599d157-17bf-887b-8f41-000000000003",
+        "resource": {
+          "resourceType": "Encounter",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+            ]
+          },
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "VN"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/aufnahmenummer",
+              "value": "F2026100009"
+            }
+          ],
+          "status": "in-progress",
+          "class": {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+            "code": "IMP",
+            "display": "inpatient encounter"
+          },
+          "type": [
+            {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                  "code": "abteilungskontakt",
+                  "display": "Abteilungskontakt"
+                }
+              ]
+            }
+          ],
+          "serviceType": {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+                "code": "2300"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000001"
+          },
+          "period": {
+            "start": "2026-11-02T21:33:00+01:00"
+          },
+          "account": [
+            {
+              "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000002",
+              "identifier": {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                      "code": "AN"
+                    }
+                  ]
+                },
+                "system": "https://fhir.klinikum-musterstadt.example/sid/abrechnungsnummer",
+                "value": "F2026100009"
+              }
+            }
+          ],
+          "hospitalization": {
+            "admitSource": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/dgkev/Aufnahmeanlass",
+                  "code": "E",
+                  "display": "Einweisung durch einen Arzt"
+                }
+              ]
+            }
+          },
+          "location": [
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "ORT1"
+                },
+                "display": "ORT1"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "wa",
+                    "display": "Ward"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "ORT1-111"
+                },
+                "display": "Zimmer 111"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "ro",
+                    "display": "Room"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "ORT1-111-2"
+                },
+                "display": "Bett 2"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "bd",
+                    "display": "Bed"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "KAR2"
+                },
+                "display": "KAR2"
+              },
+              "status": "completed",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "wa",
+                    "display": "Ward"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "KAR2-242"
+                },
+                "display": "Zimmer 242"
+              },
+              "status": "completed",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "ro",
+                    "display": "Room"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "KAR2-242-2"
+                },
+                "display": "Bett 2"
+              },
+              "status": "completed",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "bd",
+                    "display": "Bed"
+                  }
+                ]
+              }
+            }
+          ],
+          "serviceProvider": {
+            "identifier": {
+              "system": "http://fhir.de/sid/arge-ik/iknr",
+              "value": "261101015"
+            },
+            "display": "Klinikum Musterstadt"
+          }
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100009"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:9599d157-17bf-887b-8f41-000000000004",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-9599d15717bfe87b4f41ae7fad3e0dd6",
+          "target": [
+            {
+              "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000001"
+            },
+            {
+              "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000002"
+            },
+            {
+              "reference": "urn:uuid:9599d157-17bf-887b-8f41-000000000003"
+            }
+          ],
+          "occurredDateTime": "2026-11-04T11:53:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000055"
+                },
+                "display": "ADT^A02 SIM000055"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-9599d15717bfe87b4f41ae7fad3e0dd6"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,316 @@
+{
+  "status": "MAPPED",
+  "type": "MDM^T02",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000007"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "L192523347"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "von Meyer",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+                    "valueString": "von"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Meyer"
+                  }
+                ]
+              },
+              "given": [
+                "Marie"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0430 2971227",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1951-05-23",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Kirchgasse 94"
+              ],
+              "city": "Bergen am See",
+              "postalCode": "56789",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Kirchgasse"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "94"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000007&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000002",
+        "resource": {
+          "resourceType": "Binary",
+          "id": "doc-603b8fc04eadb3ef93a9736b795ab63b",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKBinary"
+            ]
+          },
+          "contentType": "application/pdf",
+          "data": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA1OTUgODQyXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIgPj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCA1OSA+PgpzdHJlYW0KQlQgL0YxIDE0IFRmIDcyIDcyMCBUZCAoU3ludGhldGljIGxldHRlciBGMjAyNjEwMDAwNykgVGogRVQKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYSA+PgplbmRvYmoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAowMDAwMDAwMjQxIDAwMDAwIG4gCjAwMDAwMDAzNTAgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA2IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgo0MjAKJSVFT0YK"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Binary/doc-603b8fc04eadb3ef93a9736b795ab63b"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000003",
+        "resource": {
+          "resourceType": "DocumentReference",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKDokumentenMetadaten"
+            ]
+          },
+          "masterIdentifier": {
+            "system": "https://fhir.klinikum-musterstadt.example/sid/dokument",
+            "value": "DOC-F2026100007-1"
+          },
+          "status": "current",
+          "docStatus": "final",
+          "type": {
+            "coding": [
+              {
+                "system": "http://dvmd.de/fhir/CodeSystem/kdl",
+                "code": "AD010104",
+                "display": "Entlassungsbericht extern"
+              },
+              {
+                "system": "http://ihe-d.de/CodeSystems/IHEXDStypeCode",
+                "code": "BERI",
+                "display": "Arztberichte"
+              }
+            ]
+          },
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://ihe-d.de/CodeSystems/IHEXDSclassCode",
+                  "code": "BRI",
+                  "display": "Brief"
+                }
+              ]
+            }
+          ],
+          "subject": {
+            "reference": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000001",
+            "identifier": {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000007"
+            }
+          },
+          "date": "2026-11-08T20:41:00+01:00",
+          "author": [
+            {
+              "display": "Dr. Lena Weber"
+            }
+          ],
+          "securityLabel": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+                  "code": "N",
+                  "display": "normal"
+                }
+              ]
+            }
+          ],
+          "content": [
+            {
+              "attachment": {
+                "contentType": "application/pdf",
+                "language": "de-DE",
+                "url": "Binary/doc-603b8fc04eadb3ef93a9736b795ab63b",
+                "title": "Entlassungsbericht extern",
+                "creation": "2026-11-08T20:11:00+01:00"
+              },
+              "format": {
+                "system": "http://ihe.net/fhir/ihe.formatcode.fhir/CodeSystem/formatcode",
+                "code": "urn:ihe:iti:xds:2017:mimeTypeSufficient",
+                "display": "mimeType Sufficient"
+              }
+            }
+          ],
+          "context": {
+            "encounter": [
+              {
+                "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100007"
+              }
+            ],
+            "facilityType": {
+              "coding": [
+                {
+                  "system": "http://ihe-d.de/CodeSystems/PatientBezogenenGesundheitsversorgung",
+                  "code": "KHS",
+                  "display": "Krankenhaus"
+                }
+              ]
+            }
+          }
+        },
+        "request": {
+          "method": "PUT",
+          "url": "DocumentReference?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fdokument%7CDOC-F2026100007-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000004",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-0f62aa1fad41bac085a3a49133661007",
+          "target": [
+            {
+              "reference": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000001"
+            },
+            {
+              "reference": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000002"
+            },
+            {
+              "reference": "urn:uuid:0f62aa1f-ad41-8ac0-85a3-000000000003"
+            }
+          ],
+          "occurredDateTime": "2026-11-08T20:41:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000044"
+                },
+                "display": "MDM^T02 SIM000044"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-0f62aa1fad41bac085a3a49133661007"
+        }
+      }
+    ]
+  }
+}

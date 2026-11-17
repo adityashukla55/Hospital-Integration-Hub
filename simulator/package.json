@@ -1,0 +1,19 @@
+{
+  "name": "@hub/simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Simulated KIS: synthetic HL7 v2 message generator and MLLP sender",
+  "bin": {
+    "kis-sim": "src/cli.ts"
+  },
+  "scripts": {
+    "corpus": "node src/cli.ts corpus --out ../testdata/corpus --patients 36",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "5.9.3"
+  }
+}

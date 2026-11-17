@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+scrape_configs:
+  # hub message store + OIE channel statistics (ops service)
+  - job_name: hub
+    static_configs:
+      - targets: ["ops:8088"]
+
+  # HAPI FHIR JVM, HTTP and Hikari metrics (Spring Boot actuator)
+  - job_name: hapi
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["hapi:8080"]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

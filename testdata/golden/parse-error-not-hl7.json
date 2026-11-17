@@ -1,0 +1,5 @@
+{
+  "status": "ERROR",
+  "code": "PARSE_ERROR",
+  "message": "message must start with an MSH segment"
+}

@@ -1,0 +1,255 @@
+{
+  "status": "MAPPED",
+  "type": "OML^O21",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000024"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "A085004192"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "Lehmann",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Lehmann"
+                  }
+                ]
+              },
+              "given": [
+                "Elif"
+              ]
+            },
+            {
+              "use": "maiden",
+              "family": "Lange",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Lange"
+                  }
+                ]
+              }
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0360 911334",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1982-08-09",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Goethestraße 69"
+              ],
+              "city": "Altheim",
+              "postalCode": "45678",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Goethestraße"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "69"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "POST",
+          "url": "Patient",
+          "ifNoneExist": "identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000024&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000002",
+        "resource": {
+          "resourceType": "ServiceRequest",
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "PLAC"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/auftragsnummer-anforderer",
+              "value": "ANF-100024-1"
+            }
+          ],
+          "status": "active",
+          "intent": "order",
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "108252007",
+                  "display": "Laboratory procedure"
+                }
+              ]
+            }
+          ],
+          "priority": "routine",
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "24326-1",
+                "display": "Electrolytes 1998 panel - Serum or Plasma"
+              },
+              {
+                "system": "https://fhir.klinikum-musterstadt.example/CodeSystem/labor-lokal",
+                "code": "ELYT",
+                "display": "Elektrolyte"
+              }
+            ],
+            "text": "Elektrolyte"
+          },
+          "subject": {
+            "reference": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000001"
+          },
+          "encounter": {
+            "reference": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100024"
+          },
+          "authoredOn": "2026-11-03T22:18:00+01:00",
+          "requester": {
+            "display": "Dr. Lena Weber"
+          }
+        },
+        "request": {
+          "method": "PUT",
+          "url": "ServiceRequest?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fauftragsnummer-anforderer%7CANF-100024-1"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000003",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-53fd0bc2467268087ea9092be2970b84",
+          "target": [
+            {
+              "reference": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000001"
+            },
+            {
+              "reference": "urn:uuid:53fd0bc2-4672-8808-bea9-000000000002"
+            }
+          ],
+          "occurredDateTime": "2026-11-03T22:18:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000148"
+                },
+                "display": "OML^O21 SIM000148"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-53fd0bc2467268087ea9092be2970b84"
+        }
+      }
+    ]
+  }
+}

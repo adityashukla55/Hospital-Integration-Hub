@@ -1,0 +1,103 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "kdl-ihe-typecode",
+  "url": "http://dvmd.de/fhir/ConceptMap/kdl-ihe-typecode",
+  "status": "active",
+  "description": "TEST FIXTURE: subset of the DVMD ConceptMap from package dvmd.kdl.r4 2025.0.1 (the full map is installed on the FHIR server with the ISiK package).",
+  "group": [
+    {
+      "source": "http://dvmd.de/fhir/CodeSystem/kdl",
+      "target": "http://ihe-d.de/CodeSystems/IHEXDStypeCode",
+      "element": [
+        {
+          "code": "AD010103",
+          "display": "Entlassungsbericht intern",
+          "target": [
+            {
+              "code": "BERI",
+              "display": "Arztberichte",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010104",
+          "display": "Entlassungsbericht extern",
+          "target": [
+            {
+              "code": "BERI",
+              "display": "Arztberichte",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010109",
+          "display": "Ärztlicher Befundbericht",
+          "target": [
+            {
+              "code": "BEFU",
+              "display": "Ergebnisse Diagnostik",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010115",
+          "display": "Entlassungsbericht",
+          "target": [
+            {
+              "code": "BERI",
+              "display": "Arztberichte",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010116",
+          "display": "Verlegungsbericht",
+          "target": [
+            {
+              "code": "BERI",
+              "display": "Arztberichte",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "ED110112",
+          "display": "KH-Entlassbrief",
+          "target": [
+            {
+              "code": "BERI",
+              "display": "Arztberichte",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "LB120107",
+          "display": "Laborbefund",
+          "target": [
+            {
+              "code": "BEFU",
+              "display": "Ergebnisse Diagnostik",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "OP150103",
+          "display": "OP-Bericht",
+          "target": [
+            {
+              "code": "OPDK",
+              "display": "OP-Dokumente",
+              "equivalence": "wider"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

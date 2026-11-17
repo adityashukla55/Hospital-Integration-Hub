@@ -1,0 +1,18 @@
+{
+  "name": "@hub/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Open Integration Engine channels and code templates as code, plus deploy tooling",
+  "scripts": {
+    "build": "node tools/build.ts",
+    "check": "node tools/build.ts --check",
+    "deploy": "node tools/deploy.ts --seed-terminology",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node tools/build.ts --check && node --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "5.9.3"
+  }
+}

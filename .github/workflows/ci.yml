@@ -1,0 +1,63 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: unit, golden and engine tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: committed build output is up to date
+        run: |
+          npm run build
+          git diff --exit-code -- mapper/dist engine/channels engine/code-templates
+
+  rhino:
+    name: mapper runs in the engine's Rhino
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: run the bundle in OIE's Rhino 1.7.13
+        run: |
+          docker run --rm -v "$PWD:/work" --entrypoint java openintegrationengine/engine:4.5.2-ubuntu-jre \
+            -cp /opt/engine/server-lib/rhino-1.7.13.jar org.mozilla.javascript.tools.shell.Main \
+            -version 200 /work/engine/test/rhino-smoke.js /work
+
+  validate:
+    name: HL7 FHIR Validator (ISiK 5.2.0)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.fhir/packages
+            .cache/validator
+          key: fhir-validator-isik-5.2.0-${{ hashFiles('tools/validate.sh') }}
+      - run: tools/validate.sh --corpus
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-report
+          path: reports/validation

@@ -1,0 +1,6 @@
+{
+  "status": "ERROR",
+  "code": "TERMINOLOGY_UNMAPPED",
+  "message": "OBX[1]-3: local lab code \"XYZ1\" has no LOINC mapping in https://fhir.klinikum-musterstadt.example/ConceptMap/labor-lokal-zu-loinc",
+  "location": "OBX[1]-3"
+}

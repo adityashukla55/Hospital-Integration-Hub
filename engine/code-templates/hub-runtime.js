@@ -1,0 +1,208 @@
+// Hub runtime: adapters between OIE (Rhino 1.7.13, Java 17) and the HubMapper
+// library. Everything that touches the engine, JDBC or HTTP lives here; the
+// mapping and delivery logic itself is in HubMapper (mapper/), unit-tested in Node.
+
+/**
+ * A hub setting from the OIE configuration map (pushed by engine/tools/deploy.ts).
+ * @param {String} key
+ * @param {String} fallback
+ * @return {String}
+ */
+function hubSetting(key, fallback) {
+  var v = configurationMap.get(key);
+  return v == null || String(v) === '' ? fallback : String(v);
+}
+
+/** Site configuration for the mapper (JSON in hub.mapper.config), or {} for the defaults. */
+function hubMapperConfig() {
+  var json = hubSetting('hub.mapper.config', '');
+  return json ? JSON.parse(json) : {};
+}
+
+/**
+ * Pooled JDBC data source for the hub database (HikariCP ships with OIE).
+ * One pool per engine, shared by all hub channels; opening a new Postgres
+ * connection per call (SCRAM handshake) cost more than the query itself.
+ */
+function hubDataSource() {
+  var url = hubSetting('hub.db.url', 'jdbc:postgresql://postgres:5432/hub');
+  var key = 'hub.dataSource|' + url;
+  var ds = globalMap.get(key);
+  if (ds == null) {
+    var config = new com.zaxxer.hikari.HikariConfig();
+    config.setPoolName('hub-db');
+    config.setDriverClassName('org.postgresql.Driver');
+    config.setJdbcUrl(url);
+    config.setUsername(hubSetting('hub.db.user', 'hub'));
+    config.setPassword(hubSetting('hub.db.password', 'hub'));
+    config.setMaximumPoolSize(parseInt(hubSetting('hub.db.poolSize', '10'), 10));
+    config.setConnectionTimeout(10000);
+    ds = new com.zaxxer.hikari.HikariDataSource(config);
+    globalMap.put(key, ds);
+  }
+  return ds;
+}
+
+/** Runs one statement with positional parameters (bound as strings, cast in SQL). */
+function hubDbRun(sql, params, query) {
+  var c = hubDataSource().getConnection();
+  try {
+    var ps = c.prepareStatement(sql);
+    try {
+      for (var i = 0; i < (params || []).length; i++) {
+        if (params[i] == null) ps.setNull(i + 1, java.sql.Types.VARCHAR);
+        else ps.setString(i + 1, String(params[i]));
+      }
+      if (!query) return ps.executeUpdate();
+      var rs = ps.executeQuery();
+      if (!rs.next()) return null;
+      var meta = rs.getMetaData();
+      var row = {};
+      for (var k = 1; k <= meta.getColumnCount(); k++) {
+        var v = rs.getObject(k);
+        row[String(meta.getColumnLabel(k))] = v == null ? null : String(v);
+      }
+      return row;
+    } finally {
+      ps.close();
+    }
+  } finally {
+    c.close();
+  }
+}
+
+/** Runs an INSERT/UPDATE with positional parameters (passed as strings; cast in SQL). */
+function hubDbUpdate(sql, params) {
+  return hubDbRun(sql, params, false);
+}
+
+/** Runs a query (or INSERT ... RETURNING) and returns the first row as a JS object of strings, or null. */
+function hubDbQueryOne(sql, params) {
+  return hubDbRun(sql, params, true);
+}
+
+/** Updates the processing status of a hub message. */
+function hubSetStatus(messageId, status, code, text, extraSql, extraParams) {
+  var sql = 'UPDATE hub.message SET status = ?, status_code = ?, status_message = ?, updated_at = now()' + (extraSql ? ', ' + extraSql : '') + ' WHERE id = ?::bigint';
+  var params = [status, code, text ? String(text).substring(0, 2000) : null].concat(extraParams || []).concat([messageId]);
+  hubDbUpdate(sql, params);
+}
+
+/**
+ * Routes a payload to another hub channel with the hub message id in its
+ * source map. The hub channels select no source response (their source
+ * queues hand off asynchronously), so routeMessage returns null on success;
+ * deployment is checked explicitly instead.
+ */
+function hubRoute(channelName, payload, messageId, vars) {
+  if (!ChannelUtil.isChannelDeployed(channelName)) throw new Error('channel "' + channelName + '" is not deployed');
+  var map = new java.util.HashMap();
+  map.put('hubMessageId', String(messageId));
+  for (var k in vars || {}) map.put(k, String(vars[k]));
+  return router.routeMessage(channelName, new RawMessage(payload, null, map));
+}
+
+/** Writes a dead letter directly (used by the dead-letter channel and as a last resort). */
+function hubRecordDeadLetter(messageId, stage, code, text, details) {
+  hubDbUpdate('INSERT INTO hub.dead_letter (message_id, stage, code, message, details) VALUES (?::bigint, ?, ?, ?, ?::jsonb)', [
+    messageId,
+    stage,
+    code,
+    String(text).substring(0, 4000),
+    details ? JSON.stringify(details) : null
+  ]);
+  hubSetStatus(messageId, 'FAILED', code, text);
+}
+
+/**
+ * Safety net for unexpected script errors (engine misconfiguration, a bug):
+ * record them as ENGINE_ERROR so no message is silently left behind, then
+ * rethrow so OIE marks the message ERROR as well.
+ */
+function hubGuard(messageId, stage, fn) {
+  try {
+    return fn();
+  } catch (e) {
+    try {
+      if (messageId) hubRecordDeadLetter(messageId, stage, 'ENGINE_ERROR', String(e), null);
+    } catch (ignored) {
+      // the hub database itself is unavailable; OIE still holds the message as ERROR
+    }
+    throw e;
+  }
+}
+
+/** Sends a message to the dead-letter channel (which records it and marks the message FAILED). */
+function hubDeadLetter(messageId, stage, code, text, details) {
+  hubRoute(
+    'Hub 4 - Dead Letter',
+    JSON.stringify({ messageId: String(messageId), stage: stage, code: code, message: String(text), details: details || null }),
+    messageId
+  );
+}
+
+/**
+ * HubMapper.FhirClient backed by Apache HttpClient 4 (ships with OIE), with a
+ * pooled connection manager shared across channels. java.net.http is not
+ * usable from Rhino: its builders are internal classes of a non-exported
+ * module package, which Rhino's reflection cannot call.
+ */
+function hubFhirClient() {
+  var base = hubSetting('hub.fhir.baseUrl', 'http://hapi:8080/fhir').replace(/\/+$/, '');
+  var http = globalMap.get('hub.httpClient');
+  if (http == null) {
+    var timeoutMs = parseInt(hubSetting('hub.fhir.timeoutSeconds', '60'), 10) * 1000;
+    var pool = new org.apache.http.impl.conn.PoolingHttpClientConnectionManager();
+    pool.setMaxTotal(20);
+    pool.setDefaultMaxPerRoute(20);
+    var config = org.apache.http.client.config.RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(timeoutMs).setConnectionRequestTimeout(5000).build();
+    http = org.apache.http.impl.client.HttpClients.custom().setConnectionManager(pool).setDefaultRequestConfig(config).build();
+    globalMap.put('hub.httpClient', http);
+  }
+  return {
+    request: function (method, path, body, headers) {
+      var url = /^https?:/.test(path) ? path : base + (path ? '/' + path : '');
+      var req;
+      if (method === 'GET') req = new org.apache.http.client.methods.HttpGet(url);
+      else if (method === 'PUT') req = new org.apache.http.client.methods.HttpPut(url);
+      else req = new org.apache.http.client.methods.HttpPost(url);
+      req.setHeader('Accept', 'application/fhir+json');
+      var contentType = 'application/fhir+json';
+      if (headers) {
+        for (var k in headers) {
+          if (k.toLowerCase() === 'content-type') contentType = headers[k];
+          else req.setHeader(k, headers[k]);
+        }
+      }
+      if (method !== 'GET') {
+        req.setEntity(new org.apache.http.entity.StringEntity(body || '', org.apache.http.entity.ContentType.create(contentType, 'UTF-8')));
+      }
+      var res = http.execute(req);
+      try {
+        var entity = res.getEntity();
+        return {
+          status: res.getStatusLine().getStatusCode(),
+          body: entity == null ? '' : String(org.apache.http.util.EntityUtils.toString(entity, 'UTF-8'))
+        };
+      } finally {
+        res.close();
+      }
+    }
+  };
+}
+
+/**
+ * Terminology via ConceptMap/$translate on the FHIR server, cached per
+ * channel for hub.terminology.cacheSeconds so ConceptMap fixes take effect
+ * without a redeploy.
+ */
+function hubTerminology() {
+  var ttl = parseInt(hubSetting('hub.terminology.cacheSeconds', '300'), 10) * 1000;
+  var entry = globalChannelMap.get('hub.terminology');
+  var now = new Date().getTime();
+  if (entry == null || now - entry.created > ttl) {
+    entry = { created: now, terminology: new HubMapper.FhirServerTerminology(hubFhirClient()) };
+    globalChannelMap.put('hub.terminology', entry);
+  }
+  return entry.terminology;
+}

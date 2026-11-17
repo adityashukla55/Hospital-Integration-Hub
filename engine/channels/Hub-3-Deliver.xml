@@ -1,0 +1,212 @@
+<channel version="4.5.2">
+  <id>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0003</id>
+  <nextMetaDataId>2</nextMetaDataId>
+  <name>Hub 3 - Deliver</name>
+  <description>Reconciles stateful resources with the server, sends one transaction per message to HAPI FHIR (validating against ISiK) and retries transient failures with exponential back-off. 4 queue threads, partitioned by patient number so per-patient order is kept.</description>
+  <revision>1</revision>
+  <sourceConnector version="4.5.2">
+    <metaDataId>0</metaDataId>
+    <name>sourceConnector</name>
+    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+      <pluginProperties/>
+      <sourceConnectorProperties version="4.5.2">
+        <responseVariable>None</responseVariable>
+        <respondAfterProcessing>false</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+        <processingThreads>1</processingThreads>
+        <resourceIds class="linked-hash-map"><entry><string>Default Resource</string><string>[Default Resource]</string></entry></resourceIds>
+        <queueBufferSize>1000</queueBufferSize>
+      </sourceConnectorProperties>
+    </properties>
+    <transformer version="4.5.2">
+      <elements/>
+      <inboundTemplate encoding="base64"></inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </transformer>
+    <filter version="4.5.2"><elements/></filter>
+    <transportName>Channel Reader</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+    <waitForPrevious>true</waitForPrevious>
+  </sourceConnector>
+  <destinationConnectors>
+    <connector version="4.5.2">
+      <metaDataId>1</metaDataId>
+      <name>Deliver to FHIR server</name>
+      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
+        <pluginProperties/>
+        <destinationConnectorProperties version="4.5.2">
+          <queueEnabled>true</queueEnabled>
+          <sendFirst>true</sendFirst>
+          <retryIntervalMillis>1000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>true</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
+          <threadCount>4</threadCount>
+          <threadAssignmentVariable>hubPartition</threadAssignmentVariable>
+          <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-map"><entry><string>Default Resource</string><string>[Default Resource]</string></entry></resourceIds>
+          <queueBufferSize>1000</queueBufferSize>
+          <reattachAttachments>true</reattachAttachments>
+        </destinationConnectorProperties>
+        <script>// Hub 3 - Deliver / destination &quot;Deliver to FHIR server&quot;
+// Queue: on failure, rotate. A RETRY outcome is re-queued with exponential
+// back-off (tracked in hub.message.next_attempt_at, so a waiting message does
+// not block the ones behind it); after hub.deliver.maxWaitSeconds it is
+// dead-lettered. FAILED outcomes (validation errors, ambiguous matches) go to
+// the dead-letter queue immediately.
+var hubMessageId = String(sourceMap.get('hubMessageId'));
+return hubGuard(hubMessageId, 'DELIVER', function () {
+  var state = hubDbQueryOne(
+    'SELECT attempts, EXTRACT(EPOCH FROM (now() - COALESCE(first_attempt_at, now()))) AS waited, ' +
+      '(next_attempt_at IS NOT NULL AND next_attempt_at &gt; now()) AS not_yet FROM hub.message WHERE id = ?::bigint',
+    [hubMessageId]
+  );
+  if (state &amp;&amp; state.not_yet === 'true') {
+    return new Response(Status.QUEUED, 'waiting for next attempt');
+  }
+
+  var payload = connectorMessage.getEncodedData() || connectorMessage.getRawData();
+  var result = JSON.parse(String(payload));
+  var out = HubMapper.deliverSafely(result, hubFhirClient());
+  var attempts = (state ? parseInt(state.attempts, 10) : 0) + 1;
+  var issues = JSON.stringify(result.issues.concat(out.issues || []));
+
+  if (out.status === 'DELIVERED') {
+    hubSetStatus(hubMessageId, 'DELIVERED', null, out.message, 'delivered_at = now(), attempts = ?::int, issues = ?::jsonb, fhir_locations = ?::jsonb, next_attempt_at = NULL', [
+      attempts,
+      issues,
+      JSON.stringify(out.locations || [])
+    ]);
+    return new Response(Status.SENT, (out.locations || []).length + ' resources written', null);
+  }
+
+  if (out.status === 'RETRY') {
+    var maxWait = parseInt(hubSetting('hub.deliver.maxWaitSeconds', '600'), 10);
+    var waited = state ? parseFloat(state.waited) : 0;
+    if (waited &gt;= maxWait) {
+      hubDeadLetter(hubMessageId, 'DELIVER', 'RETRY_EXHAUSTED', out.code + ' after ' + attempts + ' attempts: ' + out.message, { lastCode: out.code, httpStatus: out.httpStatus || null });
+      return new Response(Status.ERROR, 'RETRY_EXHAUSTED: ' + out.message, out.code);
+    }
+    var maxBackoff = parseInt(hubSetting('hub.deliver.maxBackoffSeconds', '60'), 10);
+    var delay = Math.min(Math.pow(2, attempts - 1), maxBackoff);
+    hubSetStatus(hubMessageId, 'RETRYING', out.code, out.message, &quot;attempts = ?::int, first_attempt_at = COALESCE(first_attempt_at, now()), next_attempt_at = now() + (? || ' seconds')::interval&quot;, [attempts, delay]);
+    return new Response(Status.QUEUED, out.code + ': ' + out.message + ' (next attempt in ' + delay + ' s)');
+  }
+
+  hubDeadLetter(hubMessageId, 'DELIVER', out.code, out.message, { httpStatus: out.httpStatus || null, serverIssues: out.serverIssues || [] });
+  return new Response(Status.ERROR, out.code + ': ' + out.message, out.code);
+});
+</script>
+      </properties>
+      <transformer version="4.5.2">
+      <elements/>
+      <inboundTemplate encoding="base64"></inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </transformer>
+      <responseTransformer version="4.5.2">
+      <elements/>
+      <inboundTemplate encoding="base64"></inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </responseTransformer>
+      <filter version="4.5.2"><elements/></filter>
+      <transportName>JavaScript Writer</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+  </destinationConnectors>
+  <preprocessingScript>return message;</preprocessingScript>
+  <postprocessingScript>return;</postprocessingScript>
+  <deployScript>return;</deployScript>
+  <undeployScript>return;</undeployScript>
+  <properties version="4.5.2">
+    <clearGlobalChannelMap>true</clearGlobalChannelMap>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
+    <encryptData>false</encryptData>
+    <encryptAttachments>false</encryptAttachments>
+    <encryptCustomMetaData>false</encryptCustomMetaData>
+    <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
+    <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+    <initialState>STARTED</initialState>
+    <storeAttachments>true</storeAttachments>
+    <metaDataColumns>
+      <metaDataColumn><name>SOURCE</name><type>STRING</type><mappingName>mirth_source</mappingName></metaDataColumn>
+      <metaDataColumn><name>TYPE</name><type>STRING</type><mappingName>mirth_type</mappingName></metaDataColumn>
+    </metaDataColumns>
+    <attachmentProperties version="4.5.2">
+      <type>None</type>
+      <properties/>
+    </attachmentProperties>
+    <resourceIds class="linked-hash-map"><entry><string>Default Resource</string><string>[Default Resource]</string></entry></resourceIds>
+  </properties>
+  <exportData>
+    <metadata>
+      <enabled>true</enabled>
+      <lastModified>
+        <time>1795000000000</time>
+        <timezone>UTC</timezone>
+      </lastModified>
+      <pruningSettings>
+        <pruneMetaDataDays>30</pruneMetaDataDays>
+        <pruneContentDays>7</pruneContentDays>
+        <archiveEnabled>false</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
+    </metadata>
+    <codeTemplateLibraries>
+      <codeTemplateLibrary version="4.5.2">
+        <id>7f3c2a10-0b6e-4d5b-9c11-2a4f0e6b8d01</id>
+      </codeTemplateLibrary>
+    </codeTemplateLibraries>
+    <dependentIds/>
+    <dependencyIds/>
+    <channelTags><channelTag><id>hospital-integration-hub</id><name>hospital-integration-hub</name><channelIds><string>b1d0c6a2-6f0a-4a71-9e55-3c0f1a2b0003</string></channelIds><backgroundColor><red>40</red><green>110</green><blue>180</blue><alpha>255</alpha></backgroundColor></channelTag></channelTags>
+  </exportData>
+</channel>

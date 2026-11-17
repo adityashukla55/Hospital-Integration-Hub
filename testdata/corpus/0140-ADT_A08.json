@@ -1,0 +1,541 @@
+{
+  "status": "MAPPED",
+  "type": "ADT^A08",
+  "issues": [],
+  "bundle": {
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001",
+        "resource": {
+          "resourceType": "Patient",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+            ]
+          },
+          "identifier": [
+            {
+              "use": "usual",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/patientennummer",
+              "value": "1000028"
+            },
+            {
+              "use": "official",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                    "code": "KVZ10"
+                  }
+                ]
+              },
+              "system": "http://fhir.de/sid/gkv/kvid-10",
+              "value": "E554776778"
+            }
+          ],
+          "active": true,
+          "name": [
+            {
+              "use": "official",
+              "family": "Wagner",
+              "_family": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                    "valueString": "Wagner"
+                  }
+                ]
+              },
+              "given": [
+                "Zeynep"
+              ]
+            }
+          ],
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "0146 7426492",
+              "use": "home"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1985-02-24",
+          "address": [
+            {
+              "type": "both",
+              "use": "home",
+              "line": [
+                "Kirchgasse 71"
+              ],
+              "city": "Neudorf",
+              "postalCode": "34567",
+              "country": "DE",
+              "_line": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                      "valueString": "Kirchgasse"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                      "valueString": "71"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Patient?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fpatientennummer%7C1000028&active:not=false"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000002",
+        "resource": {
+          "resourceType": "Account",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKAbrechnungsfall"
+            ]
+          },
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "AN"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/abrechnungsnummer",
+              "value": "F2026100028"
+            }
+          ],
+          "status": "active",
+          "subject": [
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001"
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Account?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fabrechnungsnummer%7CF2026100028"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000003",
+        "resource": {
+          "resourceType": "Encounter",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+            ]
+          },
+          "identifier": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "VN"
+                  }
+                ]
+              },
+              "system": "https://fhir.klinikum-musterstadt.example/sid/aufnahmenummer",
+              "value": "F2026100028"
+            }
+          ],
+          "status": "in-progress",
+          "class": {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+            "code": "IMP",
+            "display": "inpatient encounter"
+          },
+          "type": [
+            {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                  "code": "abteilungskontakt",
+                  "display": "Abteilungskontakt"
+                }
+              ]
+            }
+          ],
+          "serviceType": {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+                "code": "0100"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001"
+          },
+          "period": {
+            "start": "2026-11-04T04:16:00+01:00"
+          },
+          "diagnosis": [
+            {
+              "condition": {
+                "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000004"
+              },
+              "use": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                    "code": "referral-diagnosis"
+                  }
+                ]
+              },
+              "rank": 2
+            },
+            {
+              "condition": {
+                "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000005"
+              },
+              "use": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                    "code": "treatment-diagnosis"
+                  },
+                  {
+                    "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                    "code": "department-main-diagnosis"
+                  }
+                ]
+              },
+              "rank": 1
+            }
+          ],
+          "account": [
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000002",
+              "identifier": {
+                "type": {
+                  "coding": [
+                    {
+                      "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                      "code": "AN"
+                    }
+                  ]
+                },
+                "system": "https://fhir.klinikum-musterstadt.example/sid/abrechnungsnummer",
+                "value": "F2026100028"
+              }
+            }
+          ],
+          "hospitalization": {
+            "admitSource": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/dgkev/Aufnahmeanlass",
+                  "code": "E",
+                  "display": "Einweisung durch einen Arzt"
+                }
+              ]
+            }
+          },
+          "location": [
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "INN1"
+                },
+                "display": "INN1"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "wa",
+                    "display": "Ward"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "INN1-299"
+                },
+                "display": "Zimmer 299"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "ro",
+                    "display": "Room"
+                  }
+                ]
+              }
+            },
+            {
+              "location": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/standort",
+                  "value": "INN1-299-3"
+                },
+                "display": "Bett 3"
+              },
+              "status": "active",
+              "physicalType": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                    "code": "bd",
+                    "display": "Bed"
+                  }
+                ]
+              }
+            }
+          ],
+          "serviceProvider": {
+            "identifier": {
+              "system": "http://fhir.de/sid/arge-ik/iknr",
+              "value": "261101015"
+            },
+            "display": "Klinikum Musterstadt"
+          }
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Encounter?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Faufnahmenummer%7CF2026100028"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000004",
+        "resource": {
+          "resourceType": "Condition",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/diagnose",
+              "value": "F2026100028-J18.9-A"
+            }
+          ],
+          "clinicalStatus": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                "code": "active"
+              }
+            ]
+          },
+          "verificationStatus": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                "code": "provisional"
+              }
+            ]
+          },
+          "code": {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+                "version": "2026",
+                "code": "J18.9",
+                "display": "Pneumonie, nicht näher bezeichnet",
+                "extension": [
+                  {
+                    "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                    "valueCoding": {
+                      "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                      "code": "V",
+                      "display": "Verdacht auf / zum Ausschluss von"
+                    }
+                  }
+                ]
+              }
+            ],
+            "text": "Pneumonie, nicht näher bezeichnet"
+          },
+          "subject": {
+            "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001"
+          },
+          "encounter": {
+            "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000003"
+          },
+          "recordedDate": "2026-11-04T04:16:00+01:00"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Condition?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fdiagnose%7CF2026100028-J18.9-A"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000005",
+        "resource": {
+          "resourceType": "Condition",
+          "meta": {
+            "profile": [
+              "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+            ]
+          },
+          "identifier": [
+            {
+              "system": "https://fhir.klinikum-musterstadt.example/sid/diagnose",
+              "value": "F2026100028-K35.8-W"
+            }
+          ],
+          "clinicalStatus": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                "code": "active"
+              }
+            ]
+          },
+          "verificationStatus": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                "code": "confirmed"
+              }
+            ]
+          },
+          "code": {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+                "version": "2026",
+                "code": "K35.8",
+                "display": "Akute Appendizitis, nicht näher bezeichnet",
+                "extension": [
+                  {
+                    "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                    "valueCoding": {
+                      "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                      "code": "G",
+                      "display": "gesicherte Diagnose"
+                    }
+                  }
+                ]
+              }
+            ],
+            "text": "Akute Appendizitis, nicht näher bezeichnet"
+          },
+          "subject": {
+            "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001"
+          },
+          "encounter": {
+            "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000003"
+          },
+          "recordedDate": "2026-11-05T04:09:00+01:00"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Condition?identifier=https%3A%2F%2Ffhir.klinikum-musterstadt.example%2Fsid%2Fdiagnose%7CF2026100028-K35.8-W"
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000006",
+        "resource": {
+          "resourceType": "Provenance",
+          "id": "hl7v2-f69505027f4d51f9da3c2a4d3824d63e",
+          "target": [
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000001"
+            },
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000002"
+            },
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000003"
+            },
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000004"
+            },
+            {
+              "reference": "urn:uuid:f6950502-7f4d-81f9-9a3c-000000000005"
+            }
+          ],
+          "occurredDateTime": "2026-11-05T04:09:00+01:00",
+          "recorded": "2026-11-17T09:00:00Z",
+          "activity": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+                "code": "UPDATE",
+                "display": "revise"
+              }
+            ]
+          },
+          "agent": [
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "author",
+                    "display": "Author"
+                  }
+                ]
+              },
+              "who": {
+                "display": "KIS (KLINIKUM)"
+              }
+            },
+            {
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+                    "code": "assembler",
+                    "display": "Assembler"
+                  }
+                ]
+              },
+              "who": {
+                "display": "Hospital Integration Hub 0.1.0"
+              }
+            }
+          ],
+          "entity": [
+            {
+              "role": "source",
+              "what": {
+                "identifier": {
+                  "system": "https://fhir.klinikum-musterstadt.example/sid/hl7v2-nachricht",
+                  "value": "KLINIKUM|KIS|SIM000176"
+                },
+                "display": "ADT^A08 SIM000176"
+              }
+            }
+          ]
+        },
+        "request": {
+          "method": "PUT",
+          "url": "Provenance/hl7v2-f69505027f4d51f9da3c2a4d3824d63e"
+        }
+      }
+    ]
+  }
+}

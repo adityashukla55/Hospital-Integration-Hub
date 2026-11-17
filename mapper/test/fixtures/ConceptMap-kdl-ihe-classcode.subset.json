@@ -1,0 +1,103 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "kdl-ihe-classcode",
+  "url": "http://dvmd.de/fhir/ConceptMap/kdl-ihe-classcode",
+  "status": "active",
+  "description": "TEST FIXTURE: subset of the DVMD ConceptMap from package dvmd.kdl.r4 2025.0.1 (the full map is installed on the FHIR server with the ISiK package).",
+  "group": [
+    {
+      "source": "http://dvmd.de/fhir/CodeSystem/kdl",
+      "target": "http://ihe-d.de/CodeSystems/IHEXDSclassCode",
+      "element": [
+        {
+          "code": "AD010103",
+          "display": "Entlassungsbericht intern",
+          "target": [
+            {
+              "code": "BRI",
+              "display": "Brief",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010104",
+          "display": "Entlassungsbericht extern",
+          "target": [
+            {
+              "code": "BRI",
+              "display": "Brief",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010109",
+          "display": "Ärztlicher Befundbericht",
+          "target": [
+            {
+              "code": "BEF",
+              "display": "Befundbericht",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010115",
+          "display": "Entlassungsbericht",
+          "target": [
+            {
+              "code": "BRI",
+              "display": "Brief",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "AD010116",
+          "display": "Verlegungsbericht",
+          "target": [
+            {
+              "code": "BRI",
+              "display": "Brief",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "ED110112",
+          "display": "KH-Entlassbrief",
+          "target": [
+            {
+              "code": "BRI",
+              "display": "Brief",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "LB120107",
+          "display": "Laborbefund",
+          "target": [
+            {
+              "code": "LAB",
+              "display": "Laborergebnisse",
+              "equivalence": "wider"
+            }
+          ]
+        },
+        {
+          "code": "OP150103",
+          "display": "OP-Bericht",
+          "target": [
+            {
+              "code": "DUR",
+              "display": "Durchführungsprotokoll",
+              "equivalence": "wider"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+node_modules/
+*.log
+.env
+.DS_Store
+
+# tsc output (the mapper's ES5 bundle in mapper/dist IS committed: it is deployed into OIE)
+mapper/build/
+
+# validator downloads, FHIR package caches, scratch
+.cache/
+reports/

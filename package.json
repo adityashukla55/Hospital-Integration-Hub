@@ -1,0 +1,23 @@
+{
+  "name": "hospital-integration-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HL7 v2 to ISiK Stufe 5 FHIR R4 integration hub on Open Integration Engine",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "mapper",
+    "engine",
+    "simulator",
+    "ops"
+  ],
+  "scripts": {
+    "build": "npm run build -w mapper && npm run build -w engine",
+    "test": "npm test -w mapper && npm test -w engine && npm test -w simulator && npm test -w ops",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "corpus": "npm run corpus -w simulator",
+    "golden:update": "npm run golden:update -w mapper"
+  }
+}

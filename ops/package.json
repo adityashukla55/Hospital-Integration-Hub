@@ -1,0 +1,20 @@
+{
+  "name": "@hub/ops",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ops console for the hub: message browser, dead-letter replay, Prometheus metrics",
+  "scripts": {
+    "start": "node src/server.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/pg": "8.23.1",
+    "typescript": "5.9.3"
+  }
+}
